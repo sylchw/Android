@@ -2,7 +2,7 @@ version: 2
 jobs:
   check-build:
     docker:
-      - image: circleci/android:api-27-alpha
+      - image: circleci/android:api-29
     working_directory: ~/code
     steps:
       - checkout
@@ -29,7 +29,7 @@ jobs:
             curl -F file=@app/build/outputs/apk/debug/app-debug.apk -F channels=$SLACK_BUILD_LOCAL -F token=$SLACK_API_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
   dev-build:
     docker:
-      - image: circleci/android:api-27-alpha
+      - image: circleci/android:api-29
     working_directory: ~/code
     steps:
       - checkout
@@ -56,7 +56,7 @@ jobs:
             curl -F file=@app/build/outputs/apk/debug/app-debug.apk -F channels=$SLACK_BUILD_STAGING -F token=$SLACK_API_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
   prod-build:
     docker:
-      - image: circleci/android:api-27-alpha
+      - image: circleci/android:api-29
     working_directory: ~/code
     steps:
       - checkout
