@@ -22,6 +22,11 @@ jobs:
       - store_artifacts:
           path: app/build/outputs/apk/
           destination: apks/
+      - run:
+          name: Upload to Slack
+          command: |
+            export GIT_COMMIT_DESC=$(git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g')
+            curl -F file=@app/build/outputs/apk/debug/app-debug.apk -F channels=$SLACK_BUILD_LOCAL -F token=$SLACK_API_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
   dev-build:
     docker:
       - image: circleci/android:api-27-alpha
@@ -48,7 +53,7 @@ jobs:
           name: Upload to Slack
           command: |
             export GIT_COMMIT_DESC=$(git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g')
-            curl -F file=@app/build/outputs/apk/debug/app-debug.apk -F channels=$SLACK_CHANNEL -F token=$SLACK_API_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
+            curl -F file=@app/build/outputs/apk/debug/app-debug.apk -F channels=$SLACK_BUILD_STAGING -F token=$SLACK_API_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
   prod-build:
     docker:
       - image: circleci/android:api-27-alpha
@@ -75,7 +80,7 @@ jobs:
           name: Upload to Slack
           command: |
             export GIT_COMMIT_DESC=$(git log --format=oneline -n 1 | sed -E 's/^[^ ]+ (.*)$/\1/g')
-            curl -F file=@app/build/outputs/apk/release/app-release-unsigned.apk -F channels=$SLACK_CHANNEL -F token=$SLACK_API_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
+            curl -F file=@app/build/outputs/apk/release/app-release-unsigned.apk -F channels=$SLACK_BUILD_PROD -F token=$SLACK_API_TOKEN -F title="${CIRCLE_PROJECT_REPONAME} | branch -> ${CIRCLE_BRANCH} | commit -> ${GIT_COMMIT_DESC}"  https://slack.com/api/files.upload
 workflows:
   version: 2
   deploy:
